@@ -292,8 +292,11 @@ class Permissions(BaseFlags):
 
         .. versionchanged:: 2.4
             Added :attr:`send_polls` permission.
+
+        .. versionchanged:: 2.4
+            Added :attr:`use_external_apps` permission.
         """
-        return cls(0b0000_0000_0000_0010_0100_0000_0111_1100_1000_0000_0000_0111_1111_1000_0100_0000)
+        return cls(0b0000_0000_0000_0110_0100_0000_0111_1100_1000_0000_0000_0111_1111_1000_0100_0000)
 
     @classmethod
     def voice(cls) -> Self:
@@ -760,6 +763,14 @@ class Permissions(BaseFlags):
         """
         return 1 << 49
 
+    @flag_value
+    def use_external_apps(self) -> int:
+        """:class:`bool`: Returns ``True`` if a user installed app can send non ephemeral messages.
+
+        .. versionadded:: 2.4
+        """
+        return 1 << 50
+
 
 def _augment_from_permissions(cls):
     cls.VALID_NAMES = set(Permissions.VALID_FLAGS)
@@ -882,6 +893,7 @@ class PermissionOverwrite:
         create_events: Optional[bool]
         send_polls: Optional[bool]
         create_polls: Optional[bool]
+        use_external_apps: Optional[bool]
 
     def __init__(self, **kwargs: Optional[bool]):
         self._values: Dict[str, Optional[bool]] = {}
