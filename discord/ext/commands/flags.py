@@ -304,8 +304,8 @@ class FlagsMeta(type):
         __commands_flag_aliases__: Dict[str, str]
         __commands_flag_regex__: Pattern[str]
         __commands_flag_case_insensitive__: bool
-        __commands_flag_delimiter__: str
-        __commands_flag_prefix__: str
+        __commands_flag_delimiter__: Tuple[str, ...]
+        __commands_flag_prefix__: Tuple[str, ...]
         __commands_flag_positional__: Optional[Flag]
 
     def __new__(
@@ -315,8 +315,8 @@ class FlagsMeta(type):
         attrs: Dict[str, Any],
         *,
         case_insensitive: bool = MISSING,
-        delimiter: str = MISSING,
-        prefix: str = MISSING,
+        delimiter: Union[str, Tuple[str, ...]] = MISSING,
+        prefix: Union[str, Tuple[str, ...]] = MISSING,
     ) -> FlagsMeta:
         attrs['__commands_is_flag__'] = True
 
@@ -369,7 +369,15 @@ class FlagsMeta(type):
                 positional = flag
         attrs['__commands_flag_positional__'] = positional
 
-        forbidden = set(delimiter).union(prefix)
+        delimiters = [delimiter] if isinstance(delimiter, str) else delimiter
+        delimiters = sorted(set(delimiter), key=len, reverse=True) or [':']
+        attrs["__commands_flag_delimiter__"] = tuple(delimiters)
+
+        prefixes = [prefix] if isinstance(prefix, str) else prefix
+        prefixes = sorted(set(prefix), key=len, reverse=True) or ['']
+        attrs["__commands_flag_prefix__"] = tuple(prefixes)
+
+        forbidden = set().union(*prefixes, *delimiters)
         for flag_name in flags:
             validate_flag_name(flag_name, forbidden)
         for alias_name in aliases:
@@ -386,7 +394,9 @@ class FlagsMeta(type):
         keys = sorted(keys, key=len, reverse=True)
 
         joined = '|'.join(keys)
-        pattern = re.compile(f'(({re.escape(prefix)})(?P<flag>{joined}){re.escape(delimiter)})', regex_flags)
+        prefix_pattern = '|'.join(re.escape(p) for p in prefixes)
+        delimiter_pattern = '|'.join(re.escape(d) for d in delimiters)
+        pattern = re.compile(f'(?:{prefix_pattern})(?P<flag>{joined})(?:{delimiter_pattern})', regex_flags)
         attrs['__commands_flag_regex__'] = pattern
         attrs['__commands_flags__'] = flags
         attrs['__commands_flag_aliases__'] = aliases
@@ -498,11 +508,11 @@ class FlagConverter(metaclass=FlagsMeta):
         A class parameter to toggle case insensitivity of the flag parsing.
         If ``True`` then flags are parsed in a case insensitive manner.
         Defaults to ``False``.
-    prefix: :class:`str`
-        The prefix that all flags must be prefixed with. By default
+    prefix: Union[:class:`str`, :class:`Tuple[str, ...]`]
+        The prefixes that all flags must be prefixed with. By default
         there is no prefix.
-    delimiter: :class:`str`
-        The delimiter that separates a flag's argument from the flag's name.
+    delimiter: Union[:class:`str`, :class:`Tuple[str, ...]`]
+        The delimiters that separate a flag's argument from the flag's name.
         By default this is ``:``.
     """
 
