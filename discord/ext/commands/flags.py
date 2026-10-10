@@ -28,7 +28,21 @@ import inspect
 import re
 import sys
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Literal, Optional, Pattern, Set, Tuple, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Literal,
+    Optional,
+    Pattern,
+    Set,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+)
 
 from discord.utils import MISSING, maybe_coroutine, resolve_annotation
 
@@ -315,8 +329,8 @@ class FlagsMeta(type):
         attrs: Dict[str, Any],
         *,
         case_insensitive: bool = MISSING,
-        delimiter: Union[str, Tuple[str, ...]] = MISSING,
-        prefix: Union[str, Tuple[str, ...]] = MISSING,
+        delimiter: Union[str, Sequence[str]] = MISSING,
+        prefix: Union[str, Sequence[str]] = MISSING,
     ) -> FlagsMeta:
         attrs['__commands_is_flag__'] = True
 
@@ -508,10 +522,10 @@ class FlagConverter(metaclass=FlagsMeta):
         A class parameter to toggle case insensitivity of the flag parsing.
         If ``True`` then flags are parsed in a case insensitive manner.
         Defaults to ``False``.
-    prefix: Union[:class:`str`, :class:`Tuple[str, ...]`]
+    prefix: Union[:class:`str`, Sequence[:class:`str`, ...]]
         The prefixes that all flags must be prefixed with. By default
         there is no prefix.
-    delimiter: Union[:class:`str`, :class:`Tuple[str, ...]`]
+    delimiter: Union[:class:`str`, Sequence[:class:`str`, ...]]
         The delimiters that separate a flag's argument from the flag's name.
         By default this is ``:``.
     """
