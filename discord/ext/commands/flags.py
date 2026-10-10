@@ -371,11 +371,11 @@ class FlagsMeta(type):
 
         delimiters = [delimiter] if isinstance(delimiter, str) else delimiter
         delimiters = sorted(set(delimiter), key=len, reverse=True) or [':']
-        attrs["__commands_flag_delimiter__"] = tuple(delimiters)
+        attrs['__commands_flag_delimiter__'] = tuple(delimiters)
 
         prefixes = [prefix] if isinstance(prefix, str) else prefix
         prefixes = sorted(set(prefix), key=len, reverse=True) or ['']
-        attrs["__commands_flag_prefix__"] = tuple(prefixes)
+        attrs['__commands_flag_prefix__'] = tuple(prefixes)
 
         forbidden = set().union(*prefixes, *delimiters)
         for flag_name in flags:
