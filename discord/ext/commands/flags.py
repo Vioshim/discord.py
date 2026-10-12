@@ -522,10 +522,10 @@ class FlagConverter(metaclass=FlagsMeta):
         A class parameter to toggle case insensitivity of the flag parsing.
         If ``True`` then flags are parsed in a case insensitive manner.
         Defaults to ``False``.
-    prefix: Union[:class:`str`, Sequence[:class:`str`, ...]]
+    prefix: Union[:class:`str`, Sequence[:class:`str`]]
         The prefixes that all flags must be prefixed with. By default
         there is no prefix.
-    delimiter: Union[:class:`str`, Sequence[:class:`str`, ...]]
+    delimiter: Union[:class:`str`, Sequence[:class:`str`]]
         The delimiters that separate a flag's argument from the flag's name.
         By default this is ``:``.
     """
